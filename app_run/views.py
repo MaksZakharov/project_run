@@ -28,9 +28,14 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         filter_type = self.request.query_params.get('type')
         if filter_type == 'coach':
-            return User.objects.filter(is_staff=True)
-        if filter_type == 'athlete':
-            return User.objects.filter(is_staff=False)
-        if filter_type == None:
-            return User.objects.all()
+            queryset = User.objects.filter(is_staff=True)
+        elif filter_type == 'athlete':
+            queryset = User.objects.filter(is_staff=False)
+        elif filter_type is None:
+            queryset = User.objects.all()
+        elif filter_type not in ['coach', 'athlete', None]:
+            queryset = User.objects.all()
+        queryset = queryset.exclude(is_superuser=True)
+        return queryset
+
 
